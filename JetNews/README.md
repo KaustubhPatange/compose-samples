@@ -1,4 +1,5 @@
 # Jetnews sample
+
 Jetnews is a sample news reading app, built with
 [Jetpack Compose](https://developer.android.com/jetpack/compose). The goal of the sample is to
 showcase the current UI capabilities of Compose.
@@ -9,8 +10,8 @@ You can clone this repository or import the
 project from Android Studio following the steps
 [here](https://developer.android.com/jetpack/compose/setup#sample).
 
-Screenshots
------------
+## Screenshots
+
 <img src="screenshots/jetnews_demo.gif" alt="Screenshot">
 
 ## Features
@@ -23,13 +24,13 @@ screen uses a navigation drawer.
 
 Package [`com.example.jetnews.ui`][1]
 
-[`JetnewsApp.kt`][2] arranges the different screens in the `NavDrawerLayout`. 
+[`JetnewsApp.kt`][2] arranges the different screens in the `NavDrawerLayout`.
 
-[`JetnewsNavGraph.kt`][3] configures the navigation routes and actions in the app. 
+[`JetNewsNavigation.kt`][3] configures the navigation routes and actions in the app using `navigator-compose`.
 
 [1]: app/src/main/java/com/example/jetnews/ui
 [2]: app/src/main/java/com/example/jetnews/ui/JetnewsApp.kt
-[3]: app/src/main/java/com/example/jetnews/ui/JetnewsNavGraph.kt
+[3]: app/src/main/java/com/example/jetnews/ui/JetNewsNavigation.kt
 
 ### Main article list
 
@@ -40,11 +41,11 @@ that scrolls vertically and horizontally.
 
 See how to:
 
-* Use `Row`s and `Column`s to arrange the contents of the UI
-* Add an `AppBar`
-* Use `MaterialTypography` and opacity to style the text
-* Use `Shape` to round the corners of the images
-* Use elevation to make the `Card`s stand out from the background
+- Use `Row`s and `Column`s to arrange the contents of the UI
+- Add an `AppBar`
+- Use `MaterialTypography` and opacity to style the text
+- Use `Shape` to round the corners of the images
+- Use elevation to make the `Card`s stand out from the background
 
 [3]: app/src/main/java/com/example/jetnews/ui/home
 

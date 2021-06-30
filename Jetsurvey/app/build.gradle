@@ -18,6 +18,7 @@ import com.example.compose.jetsurvey.buildsrc.Libs
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-parcelize'
 }
 
 android {
@@ -96,6 +97,7 @@ dependencies {
     implementation Libs.AndroidX.appcompat
     implementation Libs.AndroidX.Navigation.fragment
     implementation Libs.AndroidX.Navigation.uiKtx
+    implementation Libs.AndroidX.Navigation.navigatorCompose
     implementation Libs.AndroidX.Material.material
     implementation Libs.material
 

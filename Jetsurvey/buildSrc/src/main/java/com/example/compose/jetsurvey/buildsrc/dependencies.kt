@@ -21,7 +21,7 @@ object Versions {
 }
 
 object Libs {
-    const val androidGradlePlugin = "com.android.tools.build:gradle:7.0.0-beta03"
+    const val androidGradlePlugin = "com.android.tools.build:gradle:7.1.0-alpha02"
     const val jdkDesugar = "com.android.tools:desugar_jdk_libs:1.0.9"
 
     const val junit = "junit:junit:4.13"
@@ -85,6 +85,7 @@ object Libs {
             private const val version = "2.3.4"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val uiKtx = "androidx.navigation:navigation-ui-ktx:$version"
+            const val navigatorCompose = "io.github.kaustubhpatange:navigator-compose:0.1-alpha09"
         }
 
         object Material {

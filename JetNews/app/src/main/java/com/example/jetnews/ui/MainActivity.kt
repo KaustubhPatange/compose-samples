@@ -21,16 +21,19 @@ import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import com.example.jetnews.JetnewsApplication
+import com.kpstv.navigation.compose.ComposeNavigator
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var navigator: ComposeNavigator
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
+        navigator = ComposeNavigator.with(this, savedInstanceState).initialize()
 
         val appContainer = (application as JetnewsApplication).container
         setContent {
-            JetnewsApp(appContainer)
+            JetnewsApp(appContainer, navigator)
         }
     }
 }

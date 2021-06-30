@@ -18,7 +18,6 @@ package com.example.jetnews.ui.interests
 
 import android.content.res.Configuration.UI_MODE_NIGHT_YES
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -30,23 +29,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Scaffold
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.Surface
-import androidx.compose.material.Tab
-import androidx.compose.material.TabRow
-import androidx.compose.material.Text
-import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -68,13 +52,26 @@ import com.example.jetnews.ui.theme.JetnewsTheme
 import com.example.jetnews.utils.produceUiState
 import com.example.jetnews.utils.supportWideScreen
 import com.google.accompanist.insets.navigationBarsPadding
+import com.kpstv.navigation.compose.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.parcelize.Parcelize
 
-enum class Sections(val title: String) {
-    Topics("Topics"),
-    People("People"),
-    Publications("Publications")
+sealed class InterestRoute : Route {
+    @Parcelize @Immutable
+    data class Topics(private val noArg: String = "") : InterestRoute() {
+        override fun toString(): String = "Topics"
+    }
+    @Parcelize @Immutable
+    data class People(private val noArg: String = "") : InterestRoute() {
+        override fun toString(): String = "People"
+    }
+    @Parcelize @Immutable
+    data class Publications(private val noArg: String = "") : InterestRoute() {
+        override fun toString(): String = "Publications"
+    }
+
+    companion object { val key = InterestRoute::class }
 }
 
 /**
@@ -87,7 +84,7 @@ enum class Sections(val title: String) {
  * @param section the tab that this content is for
  * @param section content of the tab, a composable that describes the content
  */
-class TabContent(val section: Sections, val content: @Composable () -> Unit)
+class TabContent(val section: InterestRoute, val content: @Composable () -> Unit)
 
 /**
  * Stateful InterestsScreen manages state using [produceUiState]
@@ -108,7 +105,7 @@ fun InterestsScreen(
 
     // Describe the screen sections here since each section needs 2 states and 1 event.
     // Pass them to the stateless InterestsScreen using a tabContent.
-    val topicsSection = TabContent(Sections.Topics) {
+    val topicsSection = TabContent(InterestRoute.Topics()) {
         val (topics) = produceUiState(interestsRepository) {
             getTopics()
         }
@@ -121,7 +118,7 @@ fun InterestsScreen(
         TopicList(data, selectedTopics, onTopicSelect)
     }
 
-    val peopleSection = TabContent(Sections.People) {
+    val peopleSection = TabContent(InterestRoute.People()) {
         val (people) = produceUiState(interestsRepository) {
             getPeople()
         }
@@ -133,7 +130,7 @@ fun InterestsScreen(
         PeopleList(data, selectedPeople, onPeopleSelect)
     }
 
-    val publicationSection = TabContent(Sections.Publications) {
+    val publicationSection = TabContent(InterestRoute.Publications()) {
         val (publications) = produceUiState(interestsRepository) {
             getPublications()
         }
@@ -147,11 +144,8 @@ fun InterestsScreen(
     }
 
     val tabContent = listOf(topicsSection, peopleSection, publicationSection)
-    val (currentSection, updateSection) = rememberSaveable { mutableStateOf(tabContent.first().section) }
     InterestsScreen(
         tabContent = tabContent,
-        tab = currentSection,
-        onTabChange = updateSection,
         openDrawer = openDrawer,
         scaffoldState = scaffoldState
     )
@@ -162,36 +156,70 @@ fun InterestsScreen(
  *
  * @param tabContent (slot) the tabs and their content to display on this screen, must be a non-empty
  * list, tabs are displayed in the order specified by this list
- * @param tab (state) the current tab to display, must be in [tabContent]
- * @param onTabChange (event) request a change in [tab] to another tab from [tabContent]
  * @param openDrawer (event) request opening the app drawer
  * @param scaffoldState (state) the state for the screen's [Scaffold]
  */
 @Composable
 fun InterestsScreen(
     tabContent: List<TabContent>,
-    tab: Sections,
-    onTabChange: (Sections) -> Unit,
     openDrawer: () -> Unit,
     scaffoldState: ScaffoldState,
 ) {
+    val controller = rememberController<InterestRoute>()
+    val destination = remember { mutableStateOf(InterestRoute.Topics() as InterestRoute) }
+
     Scaffold(
         scaffoldState = scaffoldState,
         topBar = {
-            InsetAwareTopAppBar(
-                title = { Text("Interests") },
-                navigationIcon = {
-                    IconButton(onClick = openDrawer) {
-                        Icon(
-                            painter = painterResource(R.drawable.ic_jetnews_logo),
-                            contentDescription = stringResource(R.string.cd_open_navigation_drawer)
-                        )
+            Column {
+                InsetAwareTopAppBar(
+                    title = { Text("Interests") },
+                    navigationIcon = {
+                        IconButton(onClick = openDrawer) {
+                            Icon(
+                                painter = painterResource(R.drawable.ic_jetnews_logo),
+                                contentDescription = stringResource(R.string.cd_open_navigation_drawer)
+                            )
+                        }
                     }
-                }
-            )
+                )
+                InterestTabRow(
+                    currentSection = destination.value,
+                    updateSection = { route ->
+                        controller.navigateTo(route) {
+                            singleTop = true
+                            withAnimation {
+                                when (destination.value) {
+                                    is InterestRoute.Topics -> {
+                                        enter = EnterAnimation.SlideInRight
+                                        exit = ExitAnimation.SlideOutLeft
+                                    }
+                                    is InterestRoute.Publications -> {
+                                        enter = EnterAnimation.SlideInLeft
+                                        exit = ExitAnimation.SlideOutRight
+                                    }
+                                    is InterestRoute.People -> {
+                                        if (route is InterestRoute.Topics) {
+                                            enter = EnterAnimation.SlideInLeft
+                                            exit = ExitAnimation.SlideOutRight
+                                        } else {
+                                            enter = EnterAnimation.SlideInRight
+                                            exit = ExitAnimation.SlideOutLeft
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    tabContent = tabContent
+                )
+            }
         }
-    ) {
-        TabContent(tab, onTabChange, tabContent)
+    ) { innerPadding ->
+        findComposeNavigator().Setup(modifier = Modifier.padding(innerPadding).supportWideScreen(), key = InterestRoute.key, initial = InterestRoute.Topics(), controller = controller) { _, dest ->
+            destination.value = dest
+            tabContent.first { it.section == dest }.content.invoke()
+        }
     }
 }
 
@@ -204,9 +232,9 @@ fun InterestsScreen(
  * displayed in the order of this list
  */
 @Composable
-private fun TabContent(
-    currentSection: Sections,
-    updateSection: (Sections) -> Unit,
+private fun InterestTabRow(
+    currentSection: InterestRoute,
+    updateSection: (InterestRoute) -> Unit,
     tabContent: List<TabContent>
 ) {
     val selectedTabIndex = tabContent.indexOfFirst { it.section == currentSection }
@@ -233,7 +261,7 @@ private fun TabContent(
                         .padding(horizontal = 16.dp, vertical = 12.dp)
                 ) {
                     Text(
-                        text = tabContent.section.title,
+                        text = tabContent.section.toString(),
                         color = colorText,
                         style = MaterialTheme.typography.subtitle2,
                         modifier = Modifier.paddingFromBaseline(top = 20.dp)
@@ -244,10 +272,6 @@ private fun TabContent(
         Divider(
             color = MaterialTheme.colors.onSurface.copy(alpha = 0.1f)
         )
-        Box(modifier = Modifier.weight(1f).supportWideScreen()) {
-            // display the current tab content which is a @Composable () -> Unit
-            tabContent[selectedTabIndex].content()
-        }
     }
 }
 

@@ -50,12 +50,11 @@ import com.example.jetnews.ui.theme.JetnewsTheme
 
 @Composable
 fun AppDrawer(
-    currentRoute: String,
+    currentRoute: MainRoute,
     navigateToHome: () -> Unit,
     navigateToInterests: () -> Unit,
     closeDrawer: () -> Unit
 ) {
-
     Column(modifier = Modifier.fillMaxSize()) {
         Spacer(Modifier.height(24.dp))
         JetNewsLogo(Modifier.padding(16.dp))
@@ -63,7 +62,7 @@ fun AppDrawer(
         DrawerButton(
             icon = Icons.Filled.Home,
             label = "Home",
-            isSelected = currentRoute == MainDestinations.HOME_ROUTE,
+            isSelected = currentRoute is MainRoute.Home,
             action = {
                 navigateToHome()
                 closeDrawer()
@@ -73,7 +72,7 @@ fun AppDrawer(
         DrawerButton(
             icon = Icons.Filled.ListAlt,
             label = "Interests",
-            isSelected = currentRoute == MainDestinations.INTERESTS_ROUTE,
+            isSelected = currentRoute is MainRoute.Interest,
             action = {
                 navigateToInterests()
                 closeDrawer()
@@ -165,7 +164,7 @@ fun PreviewAppDrawer() {
     JetnewsTheme {
         Surface {
             AppDrawer(
-                currentRoute = MainDestinations.HOME_ROUTE,
+                currentRoute = MainRoute.Home(),
                 navigateToHome = {},
                 navigateToInterests = {},
                 closeDrawer = { }

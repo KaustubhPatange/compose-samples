@@ -18,22 +18,25 @@ package com.example.jetnews.ui
 
 import androidx.compose.material.Scaffold
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.SideEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.navArgument
 import androidx.navigation.compose.rememberNavController
 import com.example.jetnews.data.AppContainer
 import com.example.jetnews.ui.theme.JetnewsTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import com.kpstv.navigation.compose.ComposeNavigator
+import com.kpstv.navigation.compose.EnterAnimation
+import com.kpstv.navigation.compose.ExitAnimation
+import com.kpstv.navigation.compose.rememberController
 import kotlinx.coroutines.launch
 
 @Composable
 fun JetnewsApp(
-    appContainer: AppContainer
+    appContainer: AppContainer,
+    navigator: ComposeNavigator
 ) {
     JetnewsTheme {
         ProvideWindowInsets {
@@ -42,31 +45,39 @@ fun JetnewsApp(
                 systemUiController.setSystemBarsColor(Color.Transparent, darkIcons = false)
             }
 
-            val navController = rememberNavController()
+            val controller = rememberController<MainRoute>()
             val coroutineScope = rememberCoroutineScope()
             // This top level scaffold contains the app drawer, which needs to be accessible
             // from multiple screens. An event to open the drawer is passed down to each
             // screen that needs it.
             val scaffoldState = rememberScaffoldState()
 
-            val navBackStackEntry by navController.currentBackStackEntryAsState()
-            val currentRoute = navBackStackEntry?.destination?.route ?: MainDestinations.HOME_ROUTE
+            val currentRoute = remember { mutableStateOf(MainRoute.Home() as MainRoute) }
             Scaffold(
                 scaffoldState = scaffoldState,
                 drawerContent = {
                     AppDrawer(
-                        currentRoute = currentRoute,
-                        navigateToHome = { navController.navigate(MainDestinations.HOME_ROUTE) },
-                        navigateToInterests = { navController.navigate(MainDestinations.INTERESTS_ROUTE) },
+                        currentRoute = currentRoute.value,
+                        navigateToHome = { controller.goBack() },
+                        navigateToInterests = {
+                            controller.navigateTo(MainRoute.Interest()) {
+                                withAnimation { enter = EnterAnimation.FadeIn; exit = ExitAnimation.FadeOut }
+                            }
+                        },
                         closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
                     )
                 }
             ) {
-                JetnewsNavGraph(
-                    appContainer = appContainer,
-                    navController = navController,
-                    scaffoldState = scaffoldState
-                )
+                navigator.Setup(key = MainRoute.key, initial = MainRoute.Home(), controller = controller) { _, dest ->
+                    currentRoute.value = dest
+
+                    JetNewsNavigation(
+                        appContainer = appContainer,
+                        controller = controller,
+                        scaffoldState = scaffoldState,
+                        currentDestination = dest
+                    )
+                }
             }
         }
     }

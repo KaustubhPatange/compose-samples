@@ -25,8 +25,7 @@ import com.example.jetnews.ui.theme.JetnewsTheme
 import com.google.accompanist.insets.ProvideWindowInsets
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import com.kpstv.navigation.compose.ComposeNavigator
-import com.kpstv.navigation.compose.EnterAnimation
-import com.kpstv.navigation.compose.ExitAnimation
+import com.kpstv.navigation.compose.Fade
 import com.kpstv.navigation.compose.rememberController
 import kotlinx.coroutines.launch
 
@@ -58,7 +57,7 @@ fun JetnewsApp(
                         navigateToHome = { controller.goBack() },
                         navigateToInterests = {
                             controller.navigateTo(MainRoute.Interest()) {
-                                withAnimation { enter = EnterAnimation.FadeIn; exit = ExitAnimation.FadeOut }
+                                withAnimation { target = Fade; current = Fade }
                             }
                         },
                         closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }

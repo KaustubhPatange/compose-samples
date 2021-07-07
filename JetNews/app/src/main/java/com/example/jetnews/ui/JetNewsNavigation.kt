@@ -27,9 +27,9 @@ import com.example.jetnews.ui.article.ArticleScreen
 import com.example.jetnews.ui.home.HomeScreen
 import com.example.jetnews.ui.interests.InterestsScreen
 import com.kpstv.navigation.compose.ComposeNavigator
-import com.kpstv.navigation.compose.EnterAnimation
-import com.kpstv.navigation.compose.ExitAnimation
+import com.kpstv.navigation.compose.Fade
 import com.kpstv.navigation.compose.Route
+import com.kpstv.navigation.compose.SlideRight
 import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 
@@ -83,8 +83,8 @@ class MainActions(controller: ComposeNavigator.Controller<MainRoute>) {
     val navigateToArticle: (String) -> Unit = { postId: String ->
         controller.navigateTo(MainRoute.Article(postId)) {
             withAnimation {
-                enter = EnterAnimation.SlideInRight
-                exit = ExitAnimation.FadeOut
+                target = SlideRight
+                current = Fade
             }
         }
     }

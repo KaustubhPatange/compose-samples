@@ -191,20 +191,20 @@ fun InterestsScreen(
                             withAnimation {
                                 when (destination.value) {
                                     is InterestRoute.Topics -> {
-                                        enter = EnterAnimation.SlideInRight
-                                        exit = ExitAnimation.SlideOutLeft
+                                        target = SlideRight
+                                        current = SlideLeft
                                     }
                                     is InterestRoute.Publications -> {
-                                        enter = EnterAnimation.SlideInLeft
-                                        exit = ExitAnimation.SlideOutRight
+                                        target = SlideLeft
+                                        current = SlideRight
                                     }
                                     is InterestRoute.People -> {
                                         if (route is InterestRoute.Topics) {
-                                            enter = EnterAnimation.SlideInLeft
-                                            exit = ExitAnimation.SlideOutRight
+                                            target = SlideLeft
+                                            current = SlideRight
                                         } else {
-                                            enter = EnterAnimation.SlideInRight
-                                            exit = ExitAnimation.SlideOutLeft
+                                            target = SlideRight
+                                            current = SlideLeft
                                         }
                                     }
                                 }

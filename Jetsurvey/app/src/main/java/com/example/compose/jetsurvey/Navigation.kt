@@ -67,8 +67,8 @@ fun RouteWelcome() {
         event.getContentIfNotHandled()?.let { route ->
             controller.navigateTo(route) {
                 withAnimation {
-                    enter = EnterAnimation.FadeIn
-                    exit = ExitAnimation.FadeOut
+                    target = Fade
+                    current = Fade
                 }
             }
         }
@@ -93,8 +93,8 @@ fun RouteSignIn() {
         event.getContentIfNotHandled()?.let { route ->
             controller.navigateTo(route) {
                 withAnimation {
-                    enter = EnterAnimation.FadeIn
-                    exit = ExitAnimation.FadeOut
+                    target = Fade
+                    current = Fade
                 }
             }
         }
@@ -127,8 +127,8 @@ fun RouteSignUp() {
         event.getContentIfNotHandled()?.let { route ->
             controller.navigateTo(route) {
                 withAnimation {
-                    enter = EnterAnimation.FadeIn
-                    exit = ExitAnimation.FadeOut
+                    target = Fade
+                    current = Fade
                 }
             }
         }

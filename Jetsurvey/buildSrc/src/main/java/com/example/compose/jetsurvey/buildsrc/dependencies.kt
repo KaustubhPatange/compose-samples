@@ -85,7 +85,7 @@ object Libs {
             private const val version = "2.3.4"
             const val fragment = "androidx.navigation:navigation-fragment-ktx:$version"
             const val uiKtx = "androidx.navigation:navigation-ui-ktx:$version"
-            const val navigatorCompose = "io.github.kaustubhpatange:navigator-compose:0.1-alpha09"
+            const val navigatorCompose = "io.github.kaustubhpatange:navigator-compose:0.1-alpha11"
         }
 
         object Material {
